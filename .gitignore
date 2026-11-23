@@ -26,12 +26,20 @@ npm-debug.*
 yarn-debug.*
 yarn-error.*
 
-# macOS
+# macOS / Windows
 .DS_Store
+Thumbs.db
 *.pem
 
-# local env files
-.env*.local
+# environment files (contain your Supabase keys: never commit)
+.env
+.env.*
+!.env.example
+
+# editor and AI tool settings
+.vscode/
+.idea/
+.claude/
 
 # typescript
 *.tsbuildinfo
