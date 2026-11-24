@@ -27,14 +27,16 @@ function Field({ label, error, secure, ...props }) {
       <Text style={styles.label}>{label}</Text>
       <View style={[styles.inputWrap, !!error && styles.inputError]}>
         <TextInput
-          style={styles.input}
-          placeholderTextColor="#9a9a9a"
-          secureTextEntry={hidden}
-          autoCapitalize="none"
+          style={styles.input} //applies custome style rom the stylesheet
+          placeholderTextColor="#6a6a6a" //text color of the placeholder
+          secureTextEntry={hidden} //makes the typed charecter with dots/asterisks when hidden is true
+          autoCapitalize="none" //prevents the mobile keyword from auto capitalizing the letters
           {...props}
         />
         {secure && (
-          <Pressable onPress={() => setHidden((h) => !h)} hitSlop={8}>
+          <Pressable onPress={() => setHidden((h) => !h)} hitSlop={8}> 
+          {/* //Pressable is React Native's modern touchable wrapper for handling taps cleanly on both Mobile and Web. */}
+          {/* //hitSlop={10}: Expands the invisible tappable area by 8px on all four sides (top, bottom, left, right) without changing the visual layout—making small text buttons much easier to tap on mobile screens. */}
             <Text style={styles.toggle}>{hidden ? 'Show' : 'Hide'}</Text>
           </Pressable>
         )}
@@ -44,33 +46,35 @@ function Field({ label, error, secure, ...props }) {
   );
 }
 
+
 export default function AuthScreen() {
   const { loginWithEmail, registerWithEmail, loginWithGoogle, authError } = useAuth();
-  const { width } = useWindowDimensions();
-  const wide = width >= 900;
+  // Calls your custom React Context hook (useAuth()) and uses object destructuring to grab four specific values
+  const { width } = useWindowDimensions(); // Calls React Native's built-in useWindowDimensions() hook and extracts the current viewport width in pixels.
+  const wide = width >= 900;//Computes a boolean- false on mobile and true on desktop
 
-  const [mode, setMode] = useState('login');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
-  const [fieldErrors, setFieldErrors] = useState({});
-  const [error, setError] = useState('');
-  const [info, setInfo] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [mode, setMode] = useState('login'); //tracks which view the form is currently showing."login"/"register".
+  const [name, setName] = useState(''); //stores what the users types in the fullname field.
+  const [email, setEmail] = useState(''); //stores user's input for both login and registration
+  const [password, setPassword] = useState(''); //stores users passoword for login and registration.
+  const [confirm, setConfirm] = useState(''); //stores confirm password input during registrations so validate() can check confirm !== password.
+  const [fieldErrors, setFieldErrors] = useState({}); //Holds an object of per-field validation messages (for example, { email: 'Use your @hbplus.fit email.', password: 'Password must be at least 6 characters.' }
+  const [error, setError] = useState(''); //stores top level error banner message
+  const [info, setInfo] = useState(''); //stores neutral/success banner message.
+  const [loading, setLoading] = useState(false); //tracks whether an authentication request is currently in progress.
 
-  const isRegister = mode === 'register';
+  const isRegister = mode === 'register'; //creates a simple boolean varoable true or false.
 
-  const switchMode = (next) => {
+  const switchMode = (next) => { //switchMode is a helper function that switches the screen between 'login' and 'register'
     setMode(next);
     setError('');
     setInfo('');
     setFieldErrors({});
   };
 
-  const validate = () => {
+  const validate = () => {//validate is a form-validation helper that checks the user's inputs before submitting the email/password form.
     const e = {};
-    if (isRegister && name.trim().length < 2) e.name = 'Enter your full name.';
+    if (isRegister && name.trim().length < 3) e.name = 'Enter your full name';
     if (!email.trim()) e.email = 'Enter your email.';
     else if (!isAllowedEmail(email)) e.email = `Use your @${ALLOWED_DOMAIN} email.`;
     if (password.length < 6) e.password = 'Password must be at least 6 characters.';
@@ -117,7 +121,6 @@ export default function AuthScreen() {
       {wide && (
         <View style={styles.brandPanel}>
           <Text style={styles.brandName}>Fruit Shop</Text>
-          <Text style={styles.brandSub}>Sign in with your @{ALLOWED_DOMAIN} account.</Text>
         </View>
       )}
 
